@@ -21,12 +21,12 @@ export default class Navbar extends Component {
                                 <li><Link className="nav-link active mx-1" to="/technology">Technology</Link></li>
                             </div>
                         </div>
-                        <div className="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
+                        {/* <div className="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
                             <div className="navbar-nav">
                                 <Link className="nav-link active mx-1" aria-current="page" to="/">Home</Link>
                                 <Link className="nav-link active mx-1" to="/">About</Link>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 </nav>
             </>

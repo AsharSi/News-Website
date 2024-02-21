@@ -1,7 +1,8 @@
-import React, { Component } from 'react'
+import { Component } from 'react'
 import NewsItems from './NewsItems'
 import Spinner from './Spinner'
 import PropTypes from 'prop-types'
+import "./News.css"
 
 export default class News extends Component {
 
@@ -21,141 +22,88 @@ export default class News extends Component {
             articles: [],
             loading: false,
             page: 1,
-            // pageSize: 20,
             totalResults: 0
         }
     }
 
-    async loadData() {
+    async loadData(number) {
         this.setState({
             loading: true
         })
 
-        let url = `https://newsapi.org/v2/everything?q=${this.props.category}&apiKey=2a9c749eb0e14812a56f0a7020838337&pageSize=${this.props.pageSize}&page=${this.state.page}`;
+        let url = `https://newsapi.org/v2/everything?q=${this.props.category}&apiKey=2a9c749eb0e14812a56f0a7020838337&pageSize=${this.props.pageSize}&page=${number}`;
 
         fetch(url).then((response) => {
             return response.json();
         }).then((data) => {
+
             this.setState({
                 articles: data.articles,
                 totalResults: data.articles.length,
                 loading: false
             })
-            console.log(data)
-            console.log(this.state.page)
+
+            console.log(data.articles)
 
         }).catch((error) =>
             console.log(error)
         )
-
-        // console.log(this.state.articles.totalResults)
-        // console.log(this.state.totalResults)
-
     }
 
     async componentDidMount() {
         this.loadData();
-
-        // let url = `https://newsapi.org/v2/everything?q=${this.props.category}&apiKey=2a9c749eb0e14812a56f0a7020838337&pageSize=${this.props.pageSize}&page=${this.state.page}`;
-        // fetch(url).then((response) => {
-        //     return response.json();
-        // }).then((data) => {
-        //     this.setState({
-        //         articles: data.articles,
-        //         totalResults: (data.totalResults > 100) ? 100 : data.totalResults
-        //     })
-        // })
     }
-
-
-    // async componentDidMount() {
-    //     let url = `https://newsapi.org/v2/everything?q=cricket&apiKey=2a9c749eb0e14812a56f0a7020838337&pageSize=100&page=${this.state.page}`;
-    //     let data = await fetch(url)
-
-    //     let parseData = await data.json()
-    //     console.log(parseData)
-    //     console.log("I am in componentDidMount")
-
-    //     this.setState({
-    //         articles: parseData.articles,
-    //         // totalResults: parseData.totalResults
-    //     })
-    // }
 
     handlePrevClick = async () => {
         this.setState({
             page: this.state.page - 1
         });
 
-        this.loadData();
-
-        // let url = `https://newsapi.org/v2/everything?q=${this.props.category}&apiKey=2a9c749eb0e14812a56f0a7020838337&pageSize=${this.props.pageSize}&page=${this.state.page}`
-        // let data = await fetch(url)
-
-        // let parseData = await data.json()
-
-        // this.setState({
-        //     articles: parseData.articles,
-        //     loading: false
-        // });
+        this.loadData(this.state.page - 1);
     }
 
     handleNextClick = async () => {
-
         this.setState({
             page: this.state.page + 1
         });
 
-        this.loadData();
-
-        console.log((this.state.page), (this.state.pageSize))
-
-        // let url = `https://newsapi.org/v2/everything?q=${this.props.category}&apiKey=2a9c749eb0e14812a56f0a7020838337&pageSize=${this.props.pageSize}&page=${this.state.page + 1}`
-        // this.setState({ loading: true })
-
-        // let data = await fetch(url)
-
-        // let parseData = await data.json()
-
-        // this.setState({
-        //     page: this.state.page + 1,
-        //     articles: parseData.articles,
-        //     loading: false
-        // });
+        this.loadData(this.state.page + 1);
     }
+
 
     render() {
         return (
             <>
-                {/* Heading  */}
-                <div className='text-center my-3'>
+                <div className='text-center text-light py-3 pt-4'>
                     <h2>NewsMonkey - Top Headlines</h2>
                 </div>
 
-                {/* Spinner  */}
-                {this.state.loading && <Spinner />}
+                {this.state.loading ? <Spinner />
+                    :
+                    <>
+                        <div className='news-container'>
+                            {
+                                this.state.articles.map((element, index) => {
+                                    if (element.urlToImage && element.description && element.title)
+                                        return (
+                                            <NewsItems source={element.source} publishedAt={element.publishedAt} title={element.title} description={element.description} image={element.urlToImage} newsUrl={element.url} author={element.author} />
+                                        )
+                                    else
+                                        return null;
+                                })
+                            }
+                        </div>
 
-                {/* News Items */}
-                <div className='container row'>
-                    {!(this.state.loading) && this.state.articles.map((element) => {
-                        if (element.urlToImage && element.description && element.title)
-                            return <div className='col-md-4 p-3' key={element.url}>
-                                <NewsItems source={element.source} publishedAt={element.publishedAt} title={element.title} description={element.description} image={element.urlToImage} newsUrl={element.url} author={element.author} />
-                            </div>
-                        else
-                            return null;
-                    })}
-                </div>
-
-                {/* Previous and Next Buttons     */}
-                <div className="d-flex justify-content-between">
-                    <button disabled={this.state.page === 1} className="btn btn-info" onClick={this.handlePrevClick} type="button">
-                        <strong>&larr; Previous</strong>
-                    </button>
-                    <button disabled={100 <= this.props.pageSize * this.state.page} className="btn btn-info" onClick={this.handleNextClick} type="button">
-                        <strong>Next &rarr;</strong>
-                    </button>
-                </div>
+                        <div className="d-flex justify-content-between">
+                            <button disabled={this.state.page <= 1} className="btn btn-info" onClick={this.handlePrevClick} type="button">
+                                <strong>&larr; Previous</strong>
+                            </button>
+                            <button disabled={100 <= this.props.pageSize * this.state.page} className="btn btn-info" onClick={this.handleNextClick} type="button">
+                                <strong>Next &rarr;</strong>
+                            </button>
+                        </div>
+                    </>
+                }
             </>
         )
     }
