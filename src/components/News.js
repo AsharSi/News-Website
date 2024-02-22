@@ -27,6 +27,9 @@ export default class News extends Component {
     }
 
     async loadData(number) {
+
+        window.scrollTo(0, 0);
+
         this.setState({
             loading: true
         })
@@ -75,7 +78,7 @@ export default class News extends Component {
         return (
             <>
                 <div className='text-center text-light py-3 pt-4'>
-                    <h2>NewsMonkey - Top Headlines</h2>
+                    <h3>NewsMonkey - Top Headlines</h3>
                 </div>
 
                 {this.state.loading ? <Spinner />
@@ -94,11 +97,11 @@ export default class News extends Component {
                             }
                         </div>
 
-                        <div className="d-flex justify-content-between">
-                            <button disabled={this.state.page <= 1} className="btn btn-info" onClick={this.handlePrevClick} type="button">
+                        <div className="py-5 d-flex justify-content-evenly">
+                            <button disabled={this.state.page <= 1} className="btn btn-success" onClick={this.handlePrevClick} type="button">
                                 <strong>&larr; Previous</strong>
                             </button>
-                            <button disabled={100 <= this.props.pageSize * this.state.page} className="btn btn-info" onClick={this.handleNextClick} type="button">
+                            <button disabled={100 <= this.props.pageSize * this.state.page} className="btn btn-success" onClick={this.handleNextClick} type="button">
                                 <strong>Next &rarr;</strong>
                             </button>
                         </div>
